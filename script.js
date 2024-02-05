@@ -1,8 +1,9 @@
-const apiUrl = "http://localhost:4730/";
-const books =
-  (await getBooksData()) || JSON.parse(localStorage.getItem("books")) || [];
+"use strict";
 
-renderBooks();
+const apiUrl = "http://localhost:4730/";
+const books = [];
+
+getBooksData();
 
 function getBooksData() {
   fetch(apiUrl + "books")
@@ -15,26 +16,38 @@ function getBooksData() {
     })
     .then((booksFromApi) => {
       books.push(...booksFromApi);
+      renderBooks();
     })
     .catch(function (error) {
       console.error(error);
     });
-
-  /* async function getBooksData() {
-  try {
-    const response = await fetch(apiUrl + "books");
-    const booksFromApi = await response.json();
-    localStorage.setItem("books", JSON.stringify(booksFromApi));
-
-    return booksFromApi;
-  } catch (error) {
-    console.log(error);
-  }
-} */
 }
 
 function renderBooks() {
   const booksTable = document.querySelector("#books-table");
+
+  // Table Header
+  const tableHeader = document.createElement("thead");
+  const tableBody = document.createElement("tbody");
+
+  const tableRow = document.createElement("tr");
+  const tableHeaderTitle = document.createElement("th");
+  tableHeaderTitle.classList.add("title");
+  tableHeaderTitle.innerText = "Title";
+
+  const tableHeaderAuthor = document.createElement("th");
+  tableHeaderAuthor.classList.add("author");
+  tableHeaderAuthor.innerText = "Author";
+
+  const tableHeaderLink = document.createElement("th");
+  tableHeaderLink.classList.add("link");
+  tableHeaderLink.innerText = "Details";
+
+  tableRow.append(tableHeaderTitle, tableHeaderAuthor, tableHeaderLink);
+  tableHeader.append(tableRow);
+  booksTable.append(tableHeader);
+
+  // Table Content
 
   for (const book of books) {
     const tr = document.createElement("tr");
@@ -47,12 +60,13 @@ function renderBooks() {
 
     const tdLink = document.createElement("td");
     const bookLink = document.createElement("a");
-    bookLink.innerText = "More";
+    bookLink.innerText = "more …";
     bookLink.href = `/book.html?isbn=${book.isbn}`;
 
     tdLink.append(bookLink);
     tr.append(bookTitle, bookAuthor, tdLink);
 
-    booksTable.append(tr);
+    tableBody.append(tr);
+    booksTable.append(tableBody);
   }
 }
