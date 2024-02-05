@@ -61,6 +61,7 @@ function renderBooks() {
     const tdLink = document.createElement("td");
     const bookLink = document.createElement("a");
     bookLink.innerText = "more …";
+    bookLink.setAttribute("title", "Read more about: " + book.title);
     bookLink.href = `/book.html?isbn=${book.isbn}`;
 
     tdLink.append(bookLink);
